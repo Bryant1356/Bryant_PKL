@@ -1,5 +1,5 @@
 <?php
-$title = 'Absen';
+$title = 'Absen Tes';
 include '../components/config.php';
 include '../components/meta.php';
 include '../components/navbar.php';
