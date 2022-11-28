@@ -6,7 +6,7 @@ include 'components/config.php';
 date_default_timezone_set("Asia/Jakarta");
 $tanggal_pemesanan =  date("Y-m-d H:i:s");
 
-if (isset($_COOKIE['tgl']) && isset($_COOKIE['admin']) && isset($_COOKIE['guru'])) {
+if (isset($_SESSION['guru']) or isset($_COOKIE['tgl']) or isset($_COOKIE['admin']) or isset($_COOKIE['guru'])) {
     echo "<script>
             alert('Anda Sudah Login');
             document.location.href = 'teacher/index.php';

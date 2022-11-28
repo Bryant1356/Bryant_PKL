@@ -1,10 +1,10 @@
 <?php
-$title = 'Print';
+$title = 'Report per Month';
 include '../components/config.php';
 include '../components/meta.php';
 include '../components/navbar.php';
 date_default_timezone_set("Asia/Jakarta");
-$Date = date("M");
+// $Date = date("M");
 
 ?>
 <style>
@@ -14,6 +14,10 @@ $Date = date("M");
         }
 
         .button {
+            display: none;
+        }
+
+        .print {
             display: none;
         }
     }
@@ -52,8 +56,12 @@ $Date = date("M");
 </div>
 <article class="panel is-primary">
     <p class="panel-heading">
-        <span class="has-text-weight-bold is-flex is-justify-content-center">Laporan Absensi Siswa</span>
-        <!-- <span class="has-text-weight-bold">Bulan : <?= $from ?> s/d <?= $until ?></span> -->
+        <span class="has-text-weight-bold is-flex is-justify-content-center mb-5">Laporan Absensi Siswa</span>
+        <?php if (isset($_GET['date_now']) && isset($_GET['until'])) : ?>
+            <span class="has-text-weight-bold">Bulan : <?= $_GET['date_now'] ?> s/d <?= $_GET['until'] ?></span>
+        <?php else : ?>
+            <span class="has-text-weight-bold">Bulan : - s/d -</span>
+        <?php endif; ?>
     </p>
     <div class="table-container">
         <table class="table is-striped is-hoverable is-fullwidth is-narrow">
@@ -103,6 +111,3 @@ $Date = date("M");
     </div>
 </article>
 </div>
-<!-- <script>
-    window.print()
-</script> -->

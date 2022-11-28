@@ -36,7 +36,7 @@ endif;
                 </div>
                 <div class="navbar-item">
                     <a class="button is-primary" href="../logout.php">
-                        <strong>Sign Out</strong>
+                        <strong><i class="bi bi-box-arrow-left mr-2"></i>Sign Out</strong>
                     </a>
                 </div>
             </div>
