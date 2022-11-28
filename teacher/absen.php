@@ -34,12 +34,31 @@ if (isset($_SESSION['absen']) == true) {
     unset($_SESSION['absen']);
 }
 ?>
+<style>
+    @media print {
+        .navbar {
+            display: none;
+        }
+
+        .tambah {
+            display: none;
+        }
+
+        .button {
+            display: none;
+        }
+
+        .t {
+            display: none;
+        }
+    }
+</style>
 <div class="container mt-5 p-3">
     <div class="is-flex is-justify-content-space-between">
-        <button class="js-modal-trigger button has-background-primary has-text-weight-bold has-text-light mb-3" data-target="modal-js-example">
+        <button class="tambah js-modal-trigger button has-background-primary has-text-weight-bold has-text-light mb-3" data-target="modal-js-example">
             <i class="bi bi-plus"></i>&nbsp;Absen
         </button>
-        <a href="../students/print.php" class="button is-primary"><i class="bi bi-printer"></i>&nbsp;Print</a>
+        <a href="#" class="button is-primary" aria-hidden="true" onclick="toggle()"><i class="bi bi-printer"></i>&nbsp;Print</a>
     </div>
     <article class="panel is-primary">
         <p class="panel-heading">
@@ -116,11 +135,11 @@ if (isset($_SESSION['absen']) == true) {
                     <tr class="has-text-weight-bold">
                         <td scope="col" class="has-text-light">No</td>
                         <td scope="col" class="has-text-light">Nama</td>
-                        <td scope="col" class="has-text-light">Kelas</td>
-                        <td scope="col" class="has-text-light">Jurusan</td>
+                        <td scope="col" class="has-text-light t">Kelas</td>
+                        <td scope="col" class="has-text-light t">Jurusan</td>
                         <td scope="col" class="has-text-light">Keterangan</td>
                         <td scope="col" class="has-text-light">Tanggal</td>
-                        <td scope="col" class="has-text-light">Edit</td>
+                        <td scope="col" class="has-text-light t">Edit</td>
                     </tr>
                 </thead>
                 <tbody class="table-group-divider">
@@ -131,8 +150,8 @@ if (isset($_SESSION['absen']) == true) {
                         <tr>
                             <td><?= $no++ ?></td>
                             <td><?= $s['nama'] ?></td>
-                            <td><?= $s['kelas'] ?></td>
-                            <td><?= $s['jurusan'] ?></td>
+                            <td class="t"><?= $s['kelas'] ?></td>
+                            <td class="t"><?= $s['jurusan'] ?></td>
                             <td>
                                 <?php if ($s['keterangan'] == "Sakit") : ?>
                                     <span class="tag is-warning is-light is-medium"><?= $s['keterangan'] ?></span>
@@ -143,7 +162,7 @@ if (isset($_SESSION['absen']) == true) {
                                 <?php endif; ?>
                             </td>
                             <td><?= $s['tanggal'] ?></td>
-                            <td>
+                            <td class="t">
                                 <button class="js-modal-trigger button has-background-primary has-text-weight-bold has-text-light mb-3" data-target="edit<?= $s['id_murid'] ?>">
                                     <i class="bi bi-pencil-square"></i>&nbsp;Edit
                                 </button>
@@ -207,3 +226,8 @@ if (isset($_SESSION['absen']) == true) {
         </div>
     </article>
 </div>
+<script>
+    function toggle() {
+        window.print()
+    }
+</script>
