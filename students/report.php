@@ -4,15 +4,8 @@ include '../components/config.php';
 include '../components/meta.php';
 include '../components/navbar.php';
 date_default_timezone_set("Asia/Jakarta");
-$Date = date("Y-m-d");
+$Date = date("M");
 
-if (isset($_POST['filter'])) :
-    $from = mysqli_real_escape_string($con, $_POST['date_now']);
-    $until = mysqli_real_escape_string($con, $_POST['date_between']);
-    $AttendedStudents = $con->query("SELECT * FROM absen JOIN murid ON (absen.id_murid=murid.id_murid) JOIN kelas ON (kelas.id_kelas=murid.id_kelas) JOIN jurusan ON (jurusan.id_jurusan=murid.id_jurusan) WHERE tanggal BETWEEN '$from' AND '$until' AND kelas.id_kelas = $_SESSION[id_kelas] AND jurusan.id_jurusan = $_SESSION[id_jurusan] ORDER BY nama ASC");
-else :
-    $AttendedStudents = $con->query("SELECT * FROM absen JOIN murid ON (absen.id_murid=murid.id_murid) JOIN kelas ON (kelas.id_kelas=murid.id_kelas) JOIN jurusan ON (jurusan.id_jurusan=murid.id_jurusan) WHERE tanggal = '$Date' AND kelas.id_kelas = $_SESSION[id_kelas] AND jurusan.id_jurusan = $_SESSION[id_jurusan] ORDER BY nama ASC");
-endif;
 ?>
 <style>
     @media print {
@@ -31,15 +24,23 @@ endif;
     }
 </script>
 <div class="container mt-6">
-    <form action="" method="post" enctype="multipart/form-data">
+    <form action="" method="get" enctype="multipart/form-data">
         <div class="is-flex is-align-items-center mb-3">
             <div class="mr-2 print">
                 <label for="date_now">Dari Tanggal : </label>
-                <input type="date" name="date_now" id="date_now" class="input is-focused" required>
+                <?php if (isset($_GET['date_now'])) : ?>
+                    <input type="date" name="date_now" id="date_now" class="input is-focused" required value="<?= $_GET['date_now'] ?>">
+                <?php else : ?>
+                    <input type="date" name="date_now" id="date_now" class="input is-focused" required>
+                <?php endif; ?>
             </div>
             <div class="mr-2 print">
                 <label for="date_now">Sampai Tanggal : </label>
-                <input type="date" name="date_between" id="date_between" class="input is-focused" required>
+                <?php if (isset($_GET['until'])) : ?>
+                    <input type="date" name="until" id="until" class="input is-focused" required value="<?= $_GET['until'] ?>">
+                <?php else : ?>
+                    <input type="date" name="until" id="until" class="input is-focused" required>
+                <?php endif; ?>
             </div>
             <div class="mr-2 print">
                 <input type="submit" name="filter" id="filter" class="button is-primary mt-5 mr-2 has-text-weight-bold" value="Filter" required>
@@ -52,7 +53,7 @@ endif;
 <article class="panel is-primary">
     <p class="panel-heading">
         <span class="has-text-weight-bold is-flex is-justify-content-center">Laporan Absensi Siswa</span>
-        <span class="has-text-weight-bold">Tanggal : <?= $Date ?></span>
+        <!-- <span class="has-text-weight-bold">Bulan : <?= $from ?> s/d <?= $until ?></span> -->
     </p>
     <div class="table-container">
         <table class="table is-striped is-hoverable is-fullwidth is-narrow">
@@ -60,21 +61,42 @@ endif;
                 <tr class="has-text-weight-bold">
                     <td scope="col" class="has-text-light">No</td>
                     <td scope="col" class="has-text-light">Nama</td>
-                    <td scope="col" class="has-text-light">Keterangan</td>
+                    <td scope="col" class="has-text-light">Sakit</td>
+                    <td scope="col" class="has-text-light">Izin</td>
+                    <td scope="col" class="has-text-light">Alpa</td>
                 </tr>
             </thead>
             <tbody class="table-group-divider">
                 <?php
                 $no = 1;
-                foreach ($AttendedStudents as $s) :
+                $AttendedStudents = $con->query("SELECT * FROM murid JOIN kelas ON (kelas.id_kelas=murid.id_kelas) JOIN jurusan ON (jurusan.id_jurusan=murid.id_jurusan) WHERE kelas.id_kelas = $_SESSION[id_kelas] AND jurusan.id_jurusan = $_SESSION[id_jurusan] ORDER BY nama");
+                if (isset($_GET['filter'])) :
+                    $tanggal_awal = mysqli_real_escape_string($con, $_GET['date_now']);
+                    $tanggal_akhir = mysqli_real_escape_string($con, $_GET['until']);
+                    foreach ($AttendedStudents as $s) :
                 ?>
+                        <tr>
+                            <td><?= $no++ ?></td>
+                            <td><?= $s['nama'] ?></td>
+                            <td>
+                                <?= get_total_attend($s['id_murid'], "Sakit", $tanggal_awal, $tanggal_akhir); ?>
+                            </td>
+                            <td>
+                                <?= get_total_attend($s['id_murid'], "Izin", $tanggal_awal, $tanggal_akhir); ?>
+                            </td>
+                            <td>
+                                <?= get_total_attend($s['id_murid'], "Alpa", $tanggal_awal, $tanggal_akhir); ?>
+                            </td>
+                        </tr>
+                    <?php
+                    endforeach;
+                else : ?>
                     <tr>
-                        <td><?= $no++ ?></td>
-                        <td><?= $s['nama'] ?></td>
-                        <td><?= $s['keterangan'] ?></td>
+                        <td class="has-text-centered" colspan="5">
+                            <h4>Tidak Ada Data</h4>
+                        </td>
                     </tr>
-                <?php
-                endforeach;
+                <?php endif;
                 ?>
             </tbody>
         </table>
